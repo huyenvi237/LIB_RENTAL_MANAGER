@@ -18,6 +18,7 @@ import LoginView from './pages/LoginView';
 import MemberInfoView from './pages/MemberInfoView';
 import RenewPasswordView from './pages/RenewPasswordView';
 import UserView from './pages/UserView';
+import ManagerView from './pages/ManagerView';
 
 
 function App() {
@@ -26,9 +27,12 @@ function App() {
       <Router>
         <StyledContainer>
           <Routes>
-            <Route index element={<LoginView />}></Route>
-            <Route path='userview' element={<UserView />}>
-            </Route>
+            <Route index path ='/' element={<LoginView />}></Route>
+            <Route path='userview' element={<UserView />}></Route>
+            <Route path='manager' element={<ManagerView />}></Route>
+            <Route path='meminfo' element={<MemberInfoView />}></Route>
+            <Route path='passchange' element={<RenewPasswordView />}></Route>
+            
           </Routes>
       
           
@@ -42,3 +46,4 @@ function App() {
   );
 }
 export default App;
+
