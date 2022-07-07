@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 //Import Style
 import { StyledTextInput, StyledFormArea, 
@@ -8,11 +8,11 @@ import { StyledTextInput, StyledFormArea,
 } from './../components/Style';
 
 //Import formik
-import { Formik, Form } from 'formik';
+import { Formik, Form } from 'formik';          //Formを管理するため
 import { TextInput } from './../components/FormLib';
 
 //Import yup
-import * as Yup from 'yup';
+import * as Yup from 'yup';     //データを検証するため
 
 //Import Icon
 import { FiLock } from 'react-icons/fi';
@@ -21,8 +21,38 @@ import { BsFillFilePersonFill } from 'react-icons/bs';
 //Import ThreeDots
 import { ThreeDots } from 'react-loader-spinner';
 
+//Import Modal
+import UseModal from './../components/UseModal';
+import MemberInfoView from './MemberInfoView';
 
-function LoginView() {
+//Auth & redux
+import { connect } from 'react-redux';
+import { loginUser } from '../auth/actions/UserActions';
+
+// Import useNavigate
+import { useNavigate } from 'react-router-dom';     // ほかのページに遷移するため
+import Axios, * as others from 'axios';
+
+const LoginView = ({loginUser}) => {
+    
+    const history = useNavigate();
+    const [id, setId] = useState();
+    const [password, setPassword] = useState();
+
+    const [loginStatus, setLoginStatus] = useState("");
+
+    const login = () => {
+        Axios.post("http://localhost:4000", {
+            id: id,
+            password: password
+        }).then((response) => {
+            if(response.data.message) {
+                setLoginStatus(response.data.message)
+            }
+        })
+    }
+    
+
     return (
         <div >
             <StyledFormArea style={{border: 'solid #66BFBF'}}>
@@ -46,8 +76,9 @@ function LoginView() {
                                         .matches("^([a-z A-Z 0-9]+)$", "Wrong Type")
                         })
                     }
-                    onSubmit={(values, {setSubmitting}) => {
-                        console.log(values)
+                    onSubmit={(values, {setSubmitting,setFieldError}) => {
+                        console.log(values);
+                        loginUser(values, history, setFieldError, setSubmitting)
                     }}
                 >
                     {({isSubmitting}) => (
@@ -58,6 +89,7 @@ function LoginView() {
                                 label="ログインID" 
                                 placeholder="123456"
                                 icon={<BsFillFilePersonFill />}
+                                onChange={e => setId(e.target.value)}
                             />
 
                             <TextInput
@@ -66,11 +98,13 @@ function LoginView() {
                                 label="パスワード"
                                 placeholder="********" 
                                 icon={<FiLock />}
+                                onChange={e => setPassword(e.target.value)}
                             />
 
                             <ButtonGroup>
                                 {!isSubmitting && (<StyledFormButton
                                     type="submit"
+                                    
                                 >
                                     ログイン
                                 </StyledFormButton>
@@ -80,10 +114,12 @@ function LoginView() {
                                     <ThreeDots
                                         color={colors.primary2}
                                         height={49}
-                                        width={100} 
+                                        width={100}
                                     />
                                 )}
                             </ButtonGroup>
+
+                            
                         </Form>
                     )}
                 </Formik>
@@ -97,7 +133,10 @@ function LoginView() {
                     <br/>
                     <TextLink to="/resetinfo">ログインIDを忘れた場合</TextLink>
                 </ExtraText>
+                
             </StyledFormArea>
+
+
             <CopyrightText>
                 All rights reserved &copy;2022
             </CopyrightText>
@@ -105,4 +144,5 @@ function LoginView() {
     )
 }
 
-export default LoginView;
+
+export default connect(null, {loginUser})(LoginView);
