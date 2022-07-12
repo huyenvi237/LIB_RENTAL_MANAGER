@@ -40,7 +40,7 @@ function DeleteMulti() {
           </div>
           <Form>
             <Form.Group className="mb-2 mt-3">
-              <div class="form-check">
+              <div className="form-check">
                 <input className="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" checked />
                 <label className="form-check-label" for="flexRadioDefault1">
                   会員情報を<strong>非表示</strong>にする。
