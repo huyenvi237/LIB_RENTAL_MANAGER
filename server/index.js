@@ -16,7 +16,7 @@ const db = mysql.createPool({
     database:'lib_sys'
 });
 
-
+let idCheck;
 
 //Check connect
 /*app.get("/api/test",(req, res)=> {
@@ -55,10 +55,11 @@ app.post("/api/post",(req, res) => {
     })
 })
 
-//info
+//check
 app.post("/api/check",(req, res) => {
     const {id, email} = req.body;
     console.log(id, email);  //Check value of id, password
+    idCheck = id;
     
     const sqlSel = `SELECT id, email FROM member WHERE id=${id} and email="${email}"`;
     console.log(sqlSel);    //Check SQL query
