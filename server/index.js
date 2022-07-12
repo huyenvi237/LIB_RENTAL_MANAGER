@@ -16,26 +16,7 @@ const db = mysql.createPool({
     database:'lib_sys'
 });
 
-/*app.post("/", (req, res) => {
-    const id = req.body.id;
-    const password = req.body.password;
-    
-    db.query(
-        "SELECT id, password FROM member where id =? AND password =?",
-        [id, password],
-        (err,result) => {
-            if (err) {
-                res.send({err:err});
-            }
 
-            if (result !== null) {
-                res.send(result);
-            } else {
-                res.send({message: "Wrong information!"});
-            }
-        }
-    )
-})*/
 
 //Check connect
 /*app.get("/api/test",(req, res)=> {
@@ -74,7 +55,7 @@ app.post("/api/post",(req, res) => {
     })
 })
 
-//passchange
+//info
 app.post("/api/check",(req, res) => {
     const {id, email} = req.body;
     console.log(id, email);  //Check value of id, password
@@ -90,6 +71,18 @@ app.post("/api/check",(req, res) => {
             res.send({message: 'wrong!'});
         }
         
+    })
+})
+
+//passchange
+app.post("/api/change", (req, res) => {
+    const password = req.body.password;
+    console.log(password, idCheck);
+
+    const sqlChange = `UPDATE member SET password="${password}" WHERE id=${idCheck}`;
+    db.query(sqlChange, (err,result) => {
+        console.log(result);
+        res.send({message: 'changed!'})
     })
 })
 
