@@ -21,8 +21,13 @@ import { BsFillFilePersonFill } from 'react-icons/bs';
 //Import ThreeDots
 import { ThreeDots } from 'react-loader-spinner';
 
+// Import useNavigate
+import { useNavigate } from 'react-router-dom';     // ほかのページに遷移するため
+import Axios, * as others from 'axios';
+
 
 function MemberInfoView() {
+    const history = useNavigate();
     return (
         <div className='modal fade'>
             <StyledFormArea style={{border: 'solid #66BFBF'}}>
@@ -45,7 +50,22 @@ function MemberInfoView() {
                         })
                     }
                     onSubmit={(values, {setSubmitting}) => {
-                        console.log(values)
+                        const {id, email} = values;
+                        console.log(id,email);   //Check value of id, password
+                        Axios.post("http://localhost:3001/api/check", {
+                            id:id,
+                            email:email
+                        }).then((response) => {
+                            console.log(response.data || "null");
+                            if (response.data.message) {
+                                window.alert("Wrong information!")
+        
+                            } else {
+                                setTimeout(() => {
+                                history("/passchange")
+                            }, 400);
+                            }
+                        })
                     }}
                 >
                     {({isSubmitting}) => (
@@ -72,14 +92,6 @@ function MemberInfoView() {
                                 >
                                     送信
                                 </StyledFormButton>
-                                )}
-
-                                {isSubmitting && (
-                                    <ThreeDots
-                                        color={colors.primary2}
-                                        height={49}
-                                        width={100} 
-                                    />
                                 )}
                             </ButtonGroup>
                         </Form>
