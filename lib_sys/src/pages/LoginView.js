@@ -14,6 +14,7 @@ import { TextInput } from './../components/FormLib';
 //Import yup
 import * as Yup from 'yup';     //データを検証するため
 
+
 //Import Icon
 import { FiLock } from 'react-icons/fi';
 import { BsFillFilePersonFill } from 'react-icons/bs';
@@ -22,37 +23,17 @@ import { BsFillFilePersonFill } from 'react-icons/bs';
 import { ThreeDots } from 'react-loader-spinner';
 
 //Import Modal
-import UseModal from './../components/UseModal';
 import MemberInfoView from './MemberInfoView';
 
 //Auth & redux
 import { connect } from 'react-redux';
-import { loginUser } from '../auth/actions/UserActions';
 
 // Import useNavigate
 import { useNavigate } from 'react-router-dom';     // ほかのページに遷移するため
 import Axios, * as others from 'axios';
 
-const LoginView = ({loginUser}) => {
-    
+const LoginView = ({}) => {
     const history = useNavigate();
-    const [id, setId] = useState();
-    const [password, setPassword] = useState();
-
-    const [loginStatus, setLoginStatus] = useState("");
-
-    const login = () => {
-        Axios.post("http://localhost:4000", {
-            id: id,
-            password: password
-        }).then((response) => {
-            if(response.data.message) {
-                setLoginStatus(response.data.message)
-            }
-        })
-    }
-    
-
     return (
         <div >
             <StyledFormArea style={{border: 'solid #66BFBF'}}>
@@ -70,58 +51,62 @@ const LoginView = ({loginUser}) => {
                     }}
                     validationSchema={
                         Yup.object({
-                            id: Yup.number().required("Required").positive().integer("Invalid ID"),
+                            id: Yup.number().typeError("Number Only").required("Required").positive().integer("Invalid ID"),
                             password: Yup.string().min(8,"Too short")
                                         .max(12,"Too long").required("Required")
                                         .matches("^([a-z A-Z 0-9]+)$", "Wrong Type")
                         })
                     }
-                    onSubmit={(values, {setSubmitting,setFieldError}) => {
-                        console.log(values);
-                        loginUser(values, history, setFieldError, setSubmitting)
+                    /*onSubmit={login}*/
+                    onSubmit={(values) => {
+                        const {id, password} = values;
+                        console.log(id,password);   //Check value of id, password
+                        Axios.post("http://localhost:3001/api/post", {
+                            id:id,
+                            password:password
+                        }).then((response) => {
+                            console.log(response.data || "null");
+                            if (response.data.message) {
+                                window.alert("Wrong information!")
+        
+                            } else {
+                                setTimeout(() => {
+                                history("/userview")
+                            }, 400);
+                            }
+                        })
+
+                        
+                        
                     }}
                 >
-                    {({isSubmitting}) => (
-                        <Form>
-                            <TextInput
-                                name="id"
-                                type="text"
-                                label="ログインID" 
-                                placeholder="123456"
-                                icon={<BsFillFilePersonFill />}
-                                onChange={e => setId(e.target.value)}
-                            />
+                    
+                    <Form>
+                        <TextInput
+                            name="id"
+                            type="text"
+                            label="ログインID" 
+                            placeholder="123456"
+                            icon={<BsFillFilePersonFill />}
+                        />
 
-                            <TextInput
-                                name="password"
-                                type="password"
-                                label="パスワード"
-                                placeholder="********" 
-                                icon={<FiLock />}
-                                onChange={e => setPassword(e.target.value)}
-                            />
+                        <TextInput
+                            name="password"
+                            type="password"
+                            label="パスワード"
+                            placeholder="********" 
+                            icon={<FiLock />}
+                        />
 
-                            <ButtonGroup>
-                                {!isSubmitting && (<StyledFormButton
-                                    type="submit"
-                                    
-                                >
-                                    ログイン
-                                </StyledFormButton>
-                                )}
-
-                                {isSubmitting && (
-                                    <ThreeDots
-                                        color={colors.primary2}
-                                        height={49}
-                                        width={100}
-                                    />
-                                )}
-                            </ButtonGroup>
+                        <ButtonGroup>
+                            <StyledFormButton>
+                                ログイン
+                            </StyledFormButton>
+                        </ButtonGroup>
 
                             
-                        </Form>
-                    )}
+                    </Form>
+                    
                 </Formik>
 
                 <ExtraText style={{
@@ -145,4 +130,7 @@ const LoginView = ({loginUser}) => {
 }
 
 
-export default connect(null, {loginUser})(LoginView);
+export default LoginView;
+
+
+
