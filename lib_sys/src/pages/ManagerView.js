@@ -1,22 +1,25 @@
 import React, {useState, useEffect} from "react";
-import { Link } from 'react-router-dom';
+//import { Link } from 'react-router-dom';
 import axios from "axios";
 import BootstrapTable from 'react-bootstrap-table-next';
 
 import { StyledFormButton, CopyrightText } from "../components/Style";
 import { useNavigate } from "react-router-dom";
-import './../components/manager.css';
+
 import paginationFactory from 'react-bootstrap-table2-paginator';
-import cellEditFactory, { Type } from 'react-bootstrap-table2-editor'
+import cellEditFactory from 'react-bootstrap-table2-editor';
+ import ToolkitProvider, { Search } from 'react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit';
 
 function ManagerView() {
 
     const [data, setData] = useState([]);
+    let id=[];
 
     const loadData = async () => {
         const response = await axios.get("http://localhost:3001/api/get");
         setData(response.data);
     };
+
 
     useEffect(() => {
         loadData();
@@ -24,9 +27,31 @@ function ManagerView() {
 
     const selectRow = {
         mode:'checkbox',
-        clickToSelect: true
+        clickToSelect: true,
+        bgColor: '#aaa',
+        onSelect:(row) => {
+            console.log(row.id);
+            if(id.length === 0) {
+                id.push(row.id);
+            } else {
+                if(id.indexOf(row.id) === -1) {
+                    id.push(row.id)
+                } else {
+                    id.splice(id.indexOf(row.id),1)
+                }
+            }
+            
+            console.log(id);
+        }
+        
     }
 
+    const birthdayFormatter = (data, row) => {
+        const d = data;
+        return <span>{d.toString().substring(0,10)}</span>
+    }
+
+    const { SearchBar } = Search;
     const columns = [
         {
             dataField: 'id',
@@ -42,7 +67,8 @@ function ManagerView() {
         {
             dataField: 'birthday',
             text:'Birthday',
-            sort:true
+            sort:true,
+            formatter: birthdayFormatter,
         },
         {
             dataField: 'email',
@@ -55,8 +81,18 @@ function ManagerView() {
         }
         
     ]
+
     
     
+    const deleteMember = (id) => {
+        if(window.confirm(`Are you sure delete ${id.length} rows ?`)) {
+            axios.delete(`http://localhost:3001/api/remove/${id}`);
+            window.alert("Delete Success");
+            setTimeout(() => {
+                loadData()
+            }, 500);
+        }
+    }
 
     const navigate = useNavigate();
     const handleLogout = () => {
@@ -67,10 +103,15 @@ function ManagerView() {
     }
     return (
 
-        <div className="justify-center items-center">
+        <div className="justify-center">
             
             <h1 className='mx-auto flex 
             flex col justify-center items-center'
+                style={{
+                    textAlign: 'center',
+                    fontSize: '4.0em',
+                    padding: '30px'
+                }}
             >
                 会員管理画面
             </h1>
@@ -116,77 +157,41 @@ function ManagerView() {
             <div className="max-w-5xl mx-auto 
             flex flex col justify-center items-center"
             >
-                <StyledFormButton onClick={() => navigate("/")}>削除</StyledFormButton>
-                <StyledFormButton onClick={() => navigate("/")}>修正</StyledFormButton>
-                <input
-                    style={{
-                        border: '1px solid #66BFBF',
-                        fontSize: 20,
-                        textAlign: 'center'
-                    }}
-                    placeholder="ID、名前、生年月日" 
-                />
-                <StyledFormButton 
-                    onClick={() => navigate("/")}
-                    style={{
-                        
-                    }}
+                <StyledFormButton onClick={() => navigate("#")}>新規登録</StyledFormButton>
+                <StyledFormButton onClick={() => deleteMember(id)}>削除</StyledFormButton>
+                <StyledFormButton onClick={() => navigate("#")}>修正</StyledFormButton>
+              
+            </div>
+
+            <div style={{
+                maxWidth: '800px'
+            }}>
+                <ToolkitProvider
+                    keyField='id'
+                    data={data}
+                    columns={ columns }
+                    search
                 >
-                        新規登録
-                </StyledFormButton>
+                    {
+                        props => (
+                            <div>
+                                <SearchBar {...props.searchProps} />
+                                <hr />
+                                <BootstrapTable 
+                                    { ...props.baseProps}
+                                    striped 
+                                    hover
+                                    condensed
+                                    pagination={paginationFactory()}
+                                    cellEdit={cellEditFactory({
 
-            </div>
-{/*
-            <div>
-                <table className="styled-table">
-                    <thead>
-                        <tr>
-                            <th scop='col' style={{textAlign: 'center'}}>ID</th>
-                            <th scop='col' style={{textAlign: 'center'}}>名前</th>
-                            <th scop='col' style={{textAlign: 'center'}}>生年月日</th>
-                            <th scop='col' style={{textAlign: 'center'}}>メール</th>
-                            <th scop='col' style={{textAlign: 'center'}}>電話番号</th>
-                            <th scop='col' style={{textAlign: 'center'}}>アクション</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {data.map((item) => {
-                            return (
-                                <tr key={item.id}>
-                                    <td style={{textAlign: 'center', padding:10}}>{item.id}</td>
-                                    <td style={{textAlign: 'center', padding:10}}>{item.name}</td>
-                                    <td style={{textAlign: 'center', padding:10}}>{item.birthday}</td>
-                                    <td style={{textAlign: 'center', padding:10}}>{item.email}</td>
-                                    <td style={{textAlign: 'center', padding:10}}>{item.phone}</td>
-                                    <td style={{textAlign: 'center', padding:10}}>
-                                        <Link to={`/update/${item.id}`}>
-                                            <button className="btn btn-edit">Edit</button>
-                                        </Link>
-                                        <button className="btn btn-delete">Delete</button>
-
-                                    </td>
-                                </tr>
-                            )
-                        })}
-                    </tbody>
-
-                </table>
-            </div>
-*/}
-            <div>
-                <BootstrapTable 
-                    keyField="id" 
-                    data={data} 
-                    columns={columns} 
-                    striped 
-                    hover
-                    condensed
-                    pagination={paginationFactory()}
-                    cellEdit={cellEditFactory({
-
-                    })}
-                    selectRow={selectRow}
-                />
+                                    })}
+                                    selectRow={selectRow}
+                                />
+                            </div>
+                        )
+                    }
+                </ToolkitProvider>
             </div>
 
             <CopyrightText>
