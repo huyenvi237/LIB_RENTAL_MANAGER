@@ -1,17 +1,36 @@
 import React from 'react';
 //Import Icon
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+//import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 import { 
-    ButtonGroup,
     StyledFormButton, StyledUserButton,
     CopyrightText
 } from './../components/Style';
-import LoginView from './LoginView';
+
+
 import { useNavigate } from "react-router-dom";
 
 const UserView = () => {
     const navigate = useNavigate();
+/*
+    useEffect(() =>  {
+        window.addEventListener("popstate", () => {
+          navigate("/error");
+        });
+    })
+*/
+    const handleLogout = () => {
+        var r = window.confirm("ログアウトしてもよろしいですか?");
+        if(r) {
+            localStorage.clear();
+            navigate("/");
+        }
+    }
+
+    const openModalPassChange = () => {
+        navigate("/passuserchange")
+    }
+    
     return (
         <div>
              {/**ページタイトル */}
@@ -39,7 +58,9 @@ const UserView = () => {
 
                 }}
             >
-                <StyledFormButton onClick={() => navigate("/")}>ログアウト</StyledFormButton>
+                <StyledFormButton onClick={handleLogout}>
+                        ログアウト
+                </StyledFormButton>
             </div>
             {/**管理者ページへ遷移のボタンをセッティング*/} 
          
@@ -56,7 +77,7 @@ const UserView = () => {
 
                 }}
             >
-                <StyledFormButton onClick={() => navigate("/manager")}>管理者ページへ</StyledFormButton>
+                <StyledFormButton onClick={() => navigate("/manager")}>管理者画面</StyledFormButton>
             </div>
 
             {/** ページのコンテント */}
@@ -73,17 +94,18 @@ const UserView = () => {
                             style={{
                                 margin: 5,
                                 fontSize: 20,
-                                width: '70%'
+                                width: '60%',
+                                textAlign: 'center'
                             }}
-                            type="text" className="border border-gray-500 w-full h-full rounded-md opacity-0 p-3 " 
+                            type="text" 
                             autoComplete='off'
-                            placeholder='タイトル、著者、出版社'
+                            placeholder='タイトル、著者名、出版社名'
                         />
                      
                     </div>
                     
                     <br/>
-                    <StyledUserButton>個人情報変更</StyledUserButton>
+                    <StyledUserButton onClick={openModalPassChange}>個人情報変更</StyledUserButton>
                     <br/>
                     <StyledUserButton>パスワード変更</StyledUserButton>
                     <br/>
@@ -93,7 +115,7 @@ const UserView = () => {
                             float: 'left'
                         }}
                     >
-                        予約状況<FontAwesomeIcon icon="fa-solid fa-angle-down" />
+                        予約状況
                     </StyledUserButton>
                     <StyledUserButton
                         style={{
@@ -107,9 +129,17 @@ const UserView = () => {
                     
                 </div>
             </div>
-            <CopyrightText>
-                All rights reserved &copy;2022
-            </CopyrightText>
+            <div
+                style={{
+                    bottom: 0,
+                    clear: 'right'
+                }}
+            >
+                <CopyrightText>
+                    All rights reserved &copy;2022
+                </CopyrightText>
+            </div>
+            
         </div>
         
     )
