@@ -32,9 +32,17 @@ app.post('/register', (req, res) => {
 
     db.query('INSERT INTO member (id, name, name_kana, gender, birthday, email, phone, authority_CODE, password, postcode, address, reg_ID, reg_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,now())', [id, name, nameKana, gender, birthday, email, phone, authorityCODE, password, postCode, address, regID], (err, result) => {
         if (err) {
-            res.send(err)
             console.log(err)
             console.log("Values Not Inserted")
+            if (err.sqlMessage.includes('PRIMARY')) {
+                res.send({ message: 'dup id' })
+            } else if (err.sqlMessage.includes('email_UNIQUE')) {
+                res.send({ message: 'dup email' })
+            } else if (err.sqlMessage.includes('phone_UNIQUE')) {
+                res.send({ message: 'dup phone' })
+            } else {
+                res.send(err)
+            }
         } else {
             res.send({ message: 'inserted' })
             console.log("Values Inserted")
@@ -213,6 +221,38 @@ app.delete("/api/hide/:id", (req,res) => {
     })
 })
 
+//get, update information for edit row
+app.get('/get', (req, res) => {
+    const { getMemberID } = req.query
+    db.query(`SELECT * FROM member WHERE id = ${getMemberID}`, (err, result) => {
+        res.send(result)
+    })
+})
+
+app.put('/update', (req, res) => {
+    const { udpID, id, name, nameKana, birthday, gender, email, phone, postCode, address } = req.body
+    db.query('UPDATE members SET nameKanji = ?, nameKana = ?, birthday = ?, gender = ?, email = ?, phone = ?, postCode = ?, address = ?, updID = ?, updDate = now() WHERE memberID = ?', [nameKanji, nameKana, birthday, gender, email, phone, postCode, address, updID, getMemberID], (err, result) => {
+        if (err) {
+            console.log(err)
+            console.log("Values Not Updated")
+            if (err.sqlMessage.includes('email_UNIQUE')) {
+                res.send({ message: 'dup email' })
+            } else if (err.sqlMessage.includes('phone_UNIQUE')) {
+                res.send({ message: 'dup phone' })
+            } else {
+                res.send(err)
+            }
+        } else {
+            console.log("Values Updated")
+            res.send({ message: 'updated' })
+        }
+    })
+})
+
+//getidLogin
+app.get("/getID", (req,res) => {
+    res.send({data: idLogin});
+})
 
 app.listen(3001, () => {
     console.log("Listening from server 3001");
