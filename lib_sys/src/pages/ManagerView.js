@@ -2,18 +2,23 @@ import React, {useState, useEffect} from "react";
 //import { Link } from 'react-router-dom';
 import axios from "axios";
 import BootstrapTable from 'react-bootstrap-table-next';
+import { FaArrowsAltV } from 'react-icons/fa';
 
-import { StyledFormButton, CopyrightText } from "../components/Style";
+import { StyledFormButton, CopyrightText, BUTTON_WRAPPER_STYLES } from "../components/Style";
 import { useNavigate } from "react-router-dom";
 
 import paginationFactory from 'react-bootstrap-table2-paginator';
 import cellEditFactory from 'react-bootstrap-table2-editor';
 import ToolkitProvider, { Search } from 'react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit';
+// import Delete from "./Delete";
+// import Modal from "./modal/Modal";
 
 
 function ManagerView() {
     const [data, setData] = useState([]);
     let id=[];
+
+    // const [open, setOpen] = useState(false)
 
     const loadData = async () => {
         const response = await axios.get("http://localhost:3001/api/get");
@@ -30,7 +35,6 @@ function ManagerView() {
         bgColor: '#aaa',
         onSelect:(row) => {
             console.log(row.id);
-            console.log(row.birthday);
             if(id.length === 0) {
                 id.push(row.id);
             } else {
@@ -54,7 +58,9 @@ function ManagerView() {
         }
     }*/
 
-    
+    const upDownFormatter = (column, colIndex) => {
+        return <span><FaArrowsAltV />{column.text}</span>
+    }
 
     const birthdayFormatter = (data, row) => {
         const d = data;
@@ -82,47 +88,59 @@ function ManagerView() {
         {
             dataField: 'id',
             text:'ID',
-            sort:true
-
+            sort:true,
+            headerFormatter: upDownFormatter, 
         },
         {
             dataField: 'name',
             text:'名前(漢字)',
-            sort:true
+            sort:true,
+            headerFormatter: upDownFormatter,
         },
         {
             dataField: 'name_kana',
             text:'名前(カナ)',
-            sort:true
+            sort:true,
+            headerFormatter: upDownFormatter,
         },
         {
             dataField: 'birthday',
             text:'生年月日',
             sort:true,
             formatter: birthdayFormatter,
+            headerFormatter: upDownFormatter,
         },
         {
             dataField: 'email',
             text:'メールアドレス',
-            sort:true
+            sort:true,
+            headerFormatter: upDownFormatter,
         },
         {
             dataField: 'phone',
-            text:'電話番号'
+            text:'電話番号',
+            sort:true,
+            headerFormatter: upDownFormatter,
         },
         {
             dataField: 'gender',
             text:'性別',
             formatter: genderFormatter,
+            sort:true,
+            headerFormatter: upDownFormatter,
         },
         {
             dataField: 'reg_ID',
-            text:'登録者ID'
+            text:'登録者ID',
+            sort:true,
+            headerFormatter: upDownFormatter,
         },
         {
             dataField: 'reg_date',
             text:'登録日',
-            formatter: regFormatter
+            formatter: regFormatter,
+            sort:true,
+            headerFormatter: upDownFormatter,
         },
         
     ]
@@ -236,7 +254,14 @@ function ManagerView() {
                 <StyledFormButton onClick={() => deleteMember(id)}>削除</StyledFormButton>
                 <StyledFormButton onClick={() => hideMember(id)}>隠し</StyledFormButton>
                 <StyledFormButton onClick={() => {toEditPage()}}>修正</StyledFormButton>
-           
+                
+                {/* <BUTTON_WRAPPER_STYLES>
+                    <button onClick={() => setOpen(true)}>Open Modal</button>
+            
+                    <Modal open={open} close={() => setOpen(false)}>
+                        <Delete id={id[0]} />
+                    </Modal>
+                </BUTTON_WRAPPER_STYLES> */}
             </div>
 
             <div style={{

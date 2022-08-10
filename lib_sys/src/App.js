@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 
 import { 
   BrowserRouter as Router,
@@ -9,41 +9,32 @@ import {StyledContainer} from './components/Style'
 //Loader
 import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
 
+//import { useNavigate } from 'react-router-dom';
+
 //LoginView
 import LoginView from './pages/LoginView';
-
-//Test view
-
 import SendMail from './pages/SendMail';
 import RenewPasswordView from './pages/RenewPasswordView';
 import UserView from './pages/UserView';
 import ManagerView from './pages/ManagerView';
 import MemUserView from './pages/MemUserView';
-import { useNavigate } from "react-router-dom";
-//import TestPage from './pages/TestPage';
 import CheckInfo from './pages/CheckInfo';
-
-/*function App() {
-  return (
-    <div>
-      <TestPage />
-    </div>
-  )
-}
-
-export default App;
-*/
-
+import ErrorPage from './pages/ErrorPage';
+import Register from './pages/Register';
+import Edit from './pages/Edit';
+//import TestPage from './pages/TestPage';
+import ViewPage from './pages/ViewPage';
+// import CheckInfoAfterSendMail from './pages/CheckInfoAfterSendMail'
 
 
 function Root () {
+  /*
   const navigate = useNavigate();
-  useEffect(() =>  {
-    window.addEventListener("popstate", () => {
-      navigate(1);
-    });
-  })
-
+  window.onpopstate = () => {
+    localStorage.clear();
+    navigate(1);
+  }
+  */
   return (
     <div>
         <StyledContainer>
@@ -57,6 +48,13 @@ function Root () {
             <Route path='resetinfo' element={<SendMail />}></Route>
             <Route path='info' element={<CheckInfo />}></Route>
             <Route path='passchange' element={<RenewPasswordView />}></Route>
+            <Route path='error' element={<ErrorPage />}></Route>
+            <Route path='register' element={<Register />}></Route>
+            <Route path='edit' element={<Edit />}></Route>
+            <Route path='view' element={<ViewPage />}></Route>
+            {/* <Route path='checkinfo' element={<CheckInfoAfterSendMail />}></Route> */}
+            {/*<Route path='test' element={<TestPage />}></Route>*/}
+
             
           </Routes>
       
@@ -75,7 +73,4 @@ function App () {
 }
 export default App;
 
-/*
-  - Code du tru:
-    <Route path='userview' element={<UserView />}></Route>
-*/ 
+ 

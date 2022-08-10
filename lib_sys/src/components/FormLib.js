@@ -2,7 +2,7 @@ import React from 'react';
 import { useField } from 'formik';
 import { useState } from 'react';
 
-import { StyledFormArea, StyledLabel,
+import { StyledLabel,
          StyledTextInput,
          StyledIcon, 
          ErrorMsg
@@ -11,7 +11,7 @@ import { StyledFormArea, StyledLabel,
 //Eye for password
 import { FiEyeOff, FiEye } from 'react-icons/fi';
 
-export const TextInput = ({icon, ...props}) => {
+export const TextInput = ({icon, onChange, ...props}) => {
     const[field, meta] = useField(props);
     const [show, setShow]= useState(false)
 

@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 //Import Style
-import { StyledTextInput, StyledFormArea, 
-         StyledFormButton, StyledLabel,
-         StyledTitle, colors, ButtonGroup, 
+import { StyledFormArea, 
+         StyledFormButton, 
+         StyledTitle, ButtonGroup, 
          ExtraText, TextLink, CopyrightText
 } from './../components/Style';
 
@@ -14,36 +14,33 @@ import { TextInput } from './../components/FormLib';
 //Import yup
 import * as Yup from 'yup';     //データを検証するため
 
-
 //Import Icon
 import { FiLock } from 'react-icons/fi';
 import { BsFillFilePersonFill } from 'react-icons/bs';
-
-//Import ThreeDots
-import { ThreeDots } from 'react-loader-spinner';
-
-//Import Modal
-import MemberInfoView from './MemberInfoView';
-
-//Auth & redux
-import { connect } from 'react-redux';
 
 // Import useNavigate
 import { useNavigate } from 'react-router-dom';     // ほかのページに遷移するため
 import Axios, * as others from 'axios';
 
-const LoginView = ({}) => {
-    const history = useNavigate();
+const LoginView = () => {
+    const navigate = useNavigate();
+        window.onpopstate = () => {
+        localStorage.clear();
+        navigate("/");
+    }
     return (
         <div >
-            <StyledFormArea style={{border: 'solid #66BFBF'}}>
-                <StyledTitle
-                    style={
-                        {size:30}
+            <StyledTitle
+                style={
+                    {size:30,
+                    padding: '15px 75px'
                     }
-                >
-                    メンバーログイン
-                </StyledTitle>
+                }
+            >
+                図書館会員ログイン
+            </StyledTitle>
+            <StyledFormArea style={{border: 'solid #66BFBF'}}>
+                
                 <Formik
                     initialValues={{
                         id: "",
@@ -51,10 +48,14 @@ const LoginView = ({}) => {
                     }}
                     validationSchema={
                         Yup.object({
-                            id: Yup.number().typeError("Number Only").required("Required").positive().integer("Invalid ID"),
-                            password: Yup.string().min(8,"Too short")
-                                        .max(12,"Too long").required("Required")
-                                        .matches("^([a-z A-Z 0-9]+)$", "Wrong Type")
+                            id: Yup.number().typeError("数字のみ入力してください。")
+                                        .min(100000,"６桁を入力してください。")
+                                        .max(999999,"６桁を入力してください。")
+                                        .required("IDを入力してください。").integer("正しいIDを入力してください。"),
+                            password: Yup.string()//.min(8,"8文字以上を入力してください。")
+                                        // .max(12,"12文字以下を入力してください。")
+                                        .required("パスワードを入力してください。")
+                                        .matches("^([a-z A-Z 0-9]+)$", "英数字のみ入力してください。")
                         })
                     }
                     /*onSubmit={login}*/
@@ -67,12 +68,22 @@ const LoginView = ({}) => {
                         }).then((response) => {
                             console.log(response.data || "null");
                             if (response.data.message) {
-                                window.alert("Wrong information!")
+                                window.alert("IDまたはパスワードが間違っています。")
         
                             } else {
-                                setTimeout(() => {
-                                history("/userview")
-                            }, 400);
+                                const auth = response.data.map((item) => { return item.authority_CODE })
+                                console.log(auth);
+                                const test = auth[0];
+                                if( test === 1){
+                                    setTimeout(() => {
+                                    navigate("/userview")
+                                    }, 400);
+                                } else {
+                                    setTimeout(() => {
+                                    navigate("/memuserview")
+                                    }, 400);
+                                }
+                                
                             }
                         })
 
@@ -114,7 +125,7 @@ const LoginView = ({}) => {
                     fontSize: 10,
                     textAlign: 'right'
                 }}>
-                    <TextLink to="/meminfo">パスワードを忘れた場合</TextLink>
+                    <TextLink to="/info">パスワードを忘れた場合</TextLink>
                     <br/>
                     <TextLink to="/resetinfo">ログインIDを忘れた場合</TextLink>
                 </ExtraText>

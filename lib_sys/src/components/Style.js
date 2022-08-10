@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-
+import { rgba } from 'polished';
 
 //import background from './../assets/bg.png'
 
@@ -7,6 +7,8 @@ import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 
 export const colors = {
+    backgr: "#FFFFDE",
+    backgr1: "#F6C3D5",
     primary: "#fff",
     primary2: "#66BFBF",
     theme: "#BE185D",
@@ -15,7 +17,9 @@ export const colors = {
     dark1: "#1F2937",
     dark2: "#4B5563",
     dark3: "#9CA3AF",
-    red: "#DC2626"
+    red: "#DC2626",
+    backco2 : "#FFC2D1",
+    grayCo : "#6C757D"
 
 }
 
@@ -67,6 +71,27 @@ export const StyledFormArea = styled.div`
     padding: 45px 55px;
 `;
 
+
+export const StyledUserButton = styled.button`
+    
+    background-image: linear-gradient(#0dccea, #0d70ea);
+    border: 0;
+    border-radius: 4px;
+    box-shadow: rgba(0, 0, 0, .3) 0 5px 15px;
+    box-sizing: border-box;
+    color: #fff;
+    cursor: pointer;
+    font-family: Montserrat,sans-serif;
+    width: 100%;
+    font-size: 1.9em;
+    margin:25px 0;
+    padding: 10px 15px;
+    text-align: center;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+`;
+
 //Title
 export const StyledTitle = styled.h2`
     font-size = ${(props) => props.size}px;
@@ -88,9 +113,10 @@ export const StyleSubTitle = styled.p`
 //Button
 export const StyledFormButton = styled.button`
     padding: 10px;
+    margin: 15px;
     width: 150px;
     background-color: transparent;
-    font-size: 16px;
+    font-size: 20px;
     border: 2px solid ${colors.primary2};
     border-radius: 25px;
     color: #000;
@@ -161,6 +187,7 @@ export const ExtraText = styled.p`
 
 export const TextLink = styled(Link)`
     text-decoration: none;
+    font-size: 15px;
     color: ${colors.theme};
     transition: ease-in-out 0.3s;
 
@@ -173,8 +200,36 @@ export const TextLink = styled(Link)`
 
 //Copyright
 export const CopyrightText = styled.p`
-    padding: 5px;
-    margin: 20px;
+    /* position: fixed; */
+    bottom: 0;
+    font-size: 20px;
+    margin-top: auto;
+    margin-left: 2em;
     text-align: center;
     color: ${colors.dark3};
 `;
+
+export const BUTTON_WRAPPER_STYLES = styled.div`
+    position: relative;
+    z-index: 1;
+`
+
+export const MODAL_STYLES = styled.div`
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: ${colors.grayCo};
+    padding: 50px;
+    z-index: 1000;
+`
+
+export const OVERLAY_STYLES = styled.div`
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: ${rgba(colors.backco2,0.7)};
+    z-index: 1000;
+`

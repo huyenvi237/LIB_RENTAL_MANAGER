@@ -1,6 +1,5 @@
-import React from 'react';
-//Import Icon
-//import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import React, { useState } from 'react';
+import { PassUserChange } from './Pass/PassUserChange';
 
 import { 
     StyledFormButton, StyledUserButton,
@@ -27,11 +26,15 @@ const UserView = () => {
         }
     }
 
+    const [showModal, setShowModal] = useState(false)
+
     const openModalPassChange = () => {
-        navigate("/passuserchange")
+        setShowModal(prev => !prev);
     }
     
     return (
+
+
         <div>
              {/**ページタイトル */}
             <h1 className='mx-auto flex flex col justify-center items-center'
@@ -105,11 +108,13 @@ const UserView = () => {
                     </div>
                     
                     <br/>
-                    <StyledUserButton onClick={openModalPassChange}>個人情報変更</StyledUserButton>
+                    <StyledUserButton>個人情報変更</StyledUserButton>
                     <br/>
-                    <StyledUserButton>パスワード変更</StyledUserButton>
+                    <StyledUserButton >パスワード変更</StyledUserButton>
                     <br/>
+
                     <StyledUserButton
+                        onClick={openModalPassChange}
                         style={{
                             width: '40%',
                             float: 'left'
@@ -126,6 +131,7 @@ const UserView = () => {
                     >
                         貸出状況
                     </StyledUserButton>    
+                    <PassUserChange showModal={showModal} setShowModal={setShowModal} />
                     
                 </div>
             </div>
@@ -139,7 +145,6 @@ const UserView = () => {
                     All rights reserved &copy;2022
                 </CopyrightText>
             </div>
-            
         </div>
         
     )

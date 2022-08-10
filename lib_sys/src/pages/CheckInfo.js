@@ -20,7 +20,7 @@ import { BsFillFilePersonFill } from 'react-icons/bs';
 
 // Import useNavigate
 import { useNavigate } from 'react-router-dom';     // ほかのページに遷移するため
-import Axios, * as others from 'axios';
+import axios from 'axios';
 
 const CheckInfo = () => {
     const navigate = useNavigate();
@@ -42,20 +42,28 @@ const CheckInfo = () => {
                     }}
                     validationSchema={
                         Yup.object({
-                            id: Yup.number().required("Required").positive().integer("Invalid ID"),
-                            email: Yup.string().email("Invalid Email").required("Required")
+                            id: Yup.number().typeError("数字のみ入力してください。")
+                                    .min(100000,"６桁を入力してください。")
+                                    .max(999999,"６桁を入力してください。")
+                                    .required("IDを入力してください。").integer("正しいIDを入力してください。"),
+                            email: Yup.string().email("正しいメールアドレスを入力してください。")
+                                                .required("メールアドレスを入力してください。")
                         })
                     }
-                    onSubmit={(values, {setSubmitting}) => {
+                    onSubmit={(values) => {
                         const {id, email} = values;
-                        console.log(id,email);   //Check value of id, password
-                        Axios.post("http://localhost:3001/api/check", {
+                        console.log(id,email.includes("\""));   //Check value of id, password
+                        if (email.startsWith('\"')) {
+                            window.confirm("申し訳ございません、この文字を受け入れられません。もう一度入力したらお客様のIDをブロックします。");
+                            return;
+                        }
+                        axios.post("http://localhost:3001/api/check", {
                             id:id,
                             email:email
                         }).then((response) => {
                             console.log(response.data || "null");
                             if (response.data.message) {
-                                window.alert("Wrong information!")
+                                window.alert("IDまたはメールアドレスが間違っています。")
         
                             } else {
                                 setTimeout(() => {
@@ -65,34 +73,33 @@ const CheckInfo = () => {
                         })
                     }}
                 >
-                    {({isSubmitting}) => (
-                        <Form>
-                            <TextInput
-                                name="id"
-                                type="text"
-                                label="ログインID" 
-                                placeholder="123456"
-                                icon={<BsFillFilePersonFill />}
-                            />
+                    
+                    <Form noValidate>
+                        <TextInput
+                            name="id"
+                            type="text"
+                            label="ログインID" 
+                            placeholder="123456"
+                            icon={<BsFillFilePersonFill />}
+                        />
 
-                            <TextInput
-                                name="email"
-                                type="email"
-                                label="メール"
-                                placeholder="" 
-                                icon={<FiMail />}
-                            />
+                        <TextInput
+                            name="email"
+                            type="email"
+                            label="メール"
+                            placeholder="" 
+                            icon={<FiMail />}
+                        />
 
-                            <ButtonGroup>
-                                {!isSubmitting && (<StyledFormButton
-                                    type="submit"
-                                >
-                                    送信
-                                </StyledFormButton>
-                                )}
-                            </ButtonGroup>
-                        </Form>
-                    )}
+                        <ButtonGroup>
+                            <StyledFormButton
+                                type="submit"
+                            >
+                                送信
+                            </StyledFormButton>
+                        </ButtonGroup>
+                    </Form>
+                    
                 </Formik>
 
             </StyledFormArea>

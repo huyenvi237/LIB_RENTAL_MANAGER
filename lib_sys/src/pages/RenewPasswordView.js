@@ -1,10 +1,10 @@
 import React from 'react';
 
 //Import Style
-import { StyledTextInput, StyledFormArea, 
-         StyledFormButton, StyledLabel,
-         StyledTitle, colors, ButtonGroup, 
-         ExtraText, TextLink, CopyrightText
+import {  StyledFormArea, 
+         StyledFormButton,
+         StyledTitle, ButtonGroup, 
+         CopyrightText
 } from './../components/Style';
 
 //Import formik
@@ -16,7 +16,6 @@ import * as Yup from 'yup';
 
 //Import Icon
 import { FiLock } from 'react-icons/fi';
-import { BsFillFilePersonFill } from 'react-icons/bs';
 
 // Import useNavigate
 import { useNavigate } from 'react-router-dom';     // ほかのページに遷移するため
@@ -42,55 +41,59 @@ function RenewPasswordView() {
                     }}
                     validationSchema={
                         Yup.object({
-                            password: Yup.string().min(8,"Too short")
-                                        .max(12,"Too long").required("Required")
-                                        .matches("^([a-z A-Z 0-9]+)$", "Wrong Type"),
-                            repeatPassword: Yup.string().oneOf([Yup.ref("password")], "Passwords must match")
-                                        .required("Required")
+                            password: Yup.string().min(8,"8文字以上を入力してください。")
+                            .max(12,"12文字以下を入力してください。").required("新しいパスワードを入力してください。")
+                            .matches("^([a-z A-Z 0-9]+)$", "英数字のみ入力してください。"),
+                            repeatPassword: Yup.string().oneOf([Yup.ref("password")], "パスワードが一致しません。")
+                                        .required("新しいパスワードをもう一度入力してください。")
                         })
                     }
                     onSubmit={(values) => {
                         const {password, repeatPassword} = values;
                         console.log(password,repeatPassword);   //Check value of id, password
-                        Axios.post("http://localhost:3001/api/change", {
+                    
+                        Axios.post("http://localhost:3001/api/checkpass", {
                             password:password
-                        }).then(() => {
-                            setTimeout(() => {
-                                history("/")
-                            }, 400);
-                            
-                        })
+                        }).then((response) => {
+                            if (response.data.message === "change") {
+                                window.alert("新しいパスワードが設定されました。")
+                                history("/"); 
+                            } 
+                            if (response.data.message === "error") {
+                                window.alert("一度使用したパスワードは、新しいパスワードとして設定できません。")
+                            }
+                         })
                     }}
                 >
-                    {({isSubmitting}) => (
-                        <Form>
-                            <TextInput
-                                name="password"
-                                type="password"
-                                label="新しいパスワード"
-                                placeholder="********" 
-                                icon={<FiLock />}
-                            />
+                    
+                    <Form>
+                        <TextInput
+                            name="password"
+                            type="password"
+                            label="新しいパスワード"
+                            placeholder="********" 
+                            icon={<FiLock />}
+                        />
 
-                            <TextInput
-                                name="repeatPassword"
-                                type="password"
-                                label="新しいパスワード再入力"
-                                placeholder="********" 
-                                icon={<FiLock />}
-                            />
+                        <TextInput
+                            name="repeatPassword"
+                            type="password"
+                            label="新しいパスワード再入力"
+                            placeholder="********" 
+                            icon={<FiLock />}
+                        />
 
-                            <ButtonGroup>
-                                {!isSubmitting && (<StyledFormButton
-                                    type="submit"
-                                >
-                                    変更する
-                                </StyledFormButton>
-                                )}
+                        <ButtonGroup>
+                            <StyledFormButton
+                                type="submit"
+                            >
+                                変更する
+                            </StyledFormButton>
+                            
 
-                            </ButtonGroup>
-                        </Form>
-                    )}
+                        </ButtonGroup>
+                    </Form>
+                    
                 </Formik>
 
                 

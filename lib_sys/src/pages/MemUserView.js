@@ -3,7 +3,6 @@ import React from 'react';
 //import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 import { 
-    ButtonGroup,
     StyledFormButton, StyledUserButton,
     CopyrightText
 } from '../components/Style';
@@ -13,9 +12,11 @@ import { useNavigate } from "react-router-dom";
 
 const UserView = () => {
     const navigate = useNavigate();
+
     const handleLogout = () => {
-        var r = window.confirm("Do you really want to logout?");
+        var r = window.confirm("ログアウトよろしいですか?");
         if(r) {
+            localStorage.clear();
             navigate("/");
         }
     }
